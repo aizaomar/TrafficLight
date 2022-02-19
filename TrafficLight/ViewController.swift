@@ -2,46 +2,58 @@
 
 import UIKit
 
+enum CurrentLight {
+    case red, yellow, green
+}
+
 class ViewController: UIViewController {
     
-    let currentAlpha: CGFloat = 0.3
-
     @IBOutlet var redView: UIView!
     @IBOutlet var yellowView: UIView!
     @IBOutlet var greenView: UIView!
     
     @IBOutlet var startButton: UIButton!
     
+    private var currentLight = CurrentLight.red
+    private let lightIsOn: CGFloat = 1
+    private let lightIsOff: CGFloat = 0.3
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        redView.alpha = currentAlpha
-        yellowView.alpha = currentAlpha
-        greenView.alpha = currentAlpha
+        startButton.layer.cornerRadius = 10
         
-        startButton.layer.cornerRadius = 17
-        
-        redView.layer.cornerRadius = redView.bounds.size.height / 2
-        yellowView.layer.cornerRadius = yellowView.bounds.size.height / 2
-        greenView.layer.cornerRadius = greenView.bounds.size.height / 2
+        redView.alpha = lightIsOff
+        yellowView.alpha = lightIsOff
+        greenView.alpha = lightIsOff
     }
     
-    @IBAction func startButton(_ sender: UIButton) {
-        
-        startButton.setTitle("START", for: .normal)
-        
-        if redView.alpha == yellowView.alpha {
-            redView.alpha = CGFloat(MAXFLOAT)
-            greenView.alpha = currentAlpha
+    override func viewWillLayoutSubviews() {
+        redView.layer.cornerRadius = redView.frame.width / 2
+        yellowView.layer.cornerRadius = yellowView.frame.width / 2
+        greenView.layer.cornerRadius = greenView.frame.width / 2
+    }
+    
+    @IBAction func startButtonPressed() {
+        if startButton.currentTitle == "START" {
+            startButton.setTitle("NEXT", for: .normal)
         }
-        else if redView.alpha > currentAlpha, yellowView.alpha == greenView.alpha {
-            yellowView.alpha = CGFloat(MAXFLOAT)
-            redView.alpha = currentAlpha
-        }
-        else if yellowView.alpha > currentAlpha, greenView.alpha == redView.alpha {
-            greenView.alpha = CGFloat(MAXFLOAT)
-            yellowView.alpha = currentAlpha
+        
+        switch currentLight {
+        case .red:
+            greenView.alpha = lightIsOff
+            redView.alpha = lightIsOn
+            currentLight = .yellow
+        case .yellow:
+            redView.alpha = lightIsOff
+            yellowView.alpha = lightIsOn
+            currentLight = .green
+        case .green:
+            greenView.alpha = lightIsOn
+            yellowView.alpha = lightIsOff
+            currentLight = .red
         }
     }
 }
-
+    
+   
